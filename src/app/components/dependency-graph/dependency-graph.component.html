@@ -1,0 +1,19 @@
+<div class="graph-container">
+  <div class="graph-header">
+    <h3 class="graph-title">Service Dependencies</h3>
+    <div class="graph-controls">
+      <button class="btn btn-secondary" (click)="resetZoom()">Reset View</button>
+    </div>
+  </div>
+  <div #graphContainer class="graph-canvas"></div>
+  <div class="graph-legend">
+    <div class="legend-item">
+      <span class="legend-dot node"></span>
+      <span>Service</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-line"></span>
+      <span>Dependency</span>
+    </div>
+  </div>
+</div>

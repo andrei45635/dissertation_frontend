@@ -1,0 +1,81 @@
+.health-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.score-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin-bottom: 16px;
+}
+
+.score-circle svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.bg-circle {
+  fill: none;
+  stroke: var(--background);
+  stroke-width: 8;
+}
+
+.progress-circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.health-score.good .progress-circle {
+  stroke: var(--success);
+}
+
+.health-score.warning .progress-circle {
+  stroke: var(--warning);
+}
+
+.health-score.danger .progress-circle {
+  stroke: var(--danger);
+}
+
+.score-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.health-score.good .score-value {
+  color: var(--success);
+}
+
+.health-score.warning .score-value {
+  color: var(--warning);
+}
+
+.health-score.danger .score-value {
+  color: var(--danger);
+}
+
+.score-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.score-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+}

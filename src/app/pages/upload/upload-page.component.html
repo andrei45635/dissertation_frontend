@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="upload-page">
+    <div class="page-header">
+      <h1 class="page-title">Analyze Microservices</h1>
+      <p class="page-subtitle">Upload your project to detect architectural anti-patterns</p>
+    </div>
+
+    @if (!isAnalyzing && !currentJob) {
+      <div class="upload-section">
+        <div class="form-group">
+          <label class="form-label">Project Name</label>
+          <input
+            type="text"
+            class="form-input"
+            [(ngModel)]="projectName"
+            placeholder="Enter project name"
+          />
+        </div>
+
+        <app-file-upload (fileSelected)="onFileSelected($event)"></app-file-upload>
+
+        @if (uploadProgress > 0 && uploadProgress < 100) {
+          <div class="upload-progress">
+            <div class="upload-progress-bar" [style.width.%]="uploadProgress"></div>
+          </div>
+          <p class="upload-progress-text">Uploading... {{ uploadProgress }}%</p>
+        }
+
+        <button
+          class="btn btn-primary btn-block"
+          [disabled]="!selectedFile || !projectName || isUploading"
+          (click)="startAnalysis()"
+        >
+          @if (isUploading) {
+            <span class="spinner"></span>
+            Uploading...
+          } @else {
+            Start Analysis
+          }
+        </button>
+      </div>
+    }
+
+    @if (currentJob) {
+      <app-progress-tracker [job]="currentJob"></app-progress-tracker>
+      
+      @if (currentJob.status === 'FAILED') {
+        <div class="error-message">
+          <p>Analysis failed: {{ currentJob.errorMessage }}</p>
+          <button class="btn btn-secondary" (click)="reset()">Try Again</button>
+        </div>
+      }
+    }
+  </div>
+</div>

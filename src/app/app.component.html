@@ -1,0 +1,17 @@
+<div class="app-layout">
+  <header class="header">
+    <div class="container header-content">
+      <a routerLink="/" class="logo">
+        <span class="logo-icon">M</span>
+        <span class="logo-text">MSA Detector</span>
+      </a>
+      <nav class="nav">
+        <a routerLink="/upload" routerLinkActive="active" class="nav-link">Upload</a>
+        <a routerLink="/history" routerLinkActive="active" class="nav-link">History</a>
+      </nav>
+    </div>
+  </header>
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

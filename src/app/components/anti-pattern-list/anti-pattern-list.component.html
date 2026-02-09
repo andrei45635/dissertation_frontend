@@ -1,0 +1,57 @@
+<div class="anti-pattern-list">
+  <div class="list-header">
+    <h3 class="list-title">Detected Anti-Patterns</h3>
+    <span class="list-count">{{ antiPatterns.length }} found</span>
+  </div>
+
+  @if (antiPatterns.length === 0) {
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <p>No anti-patterns detected</p>
+    </div>
+  } @else {
+    <div class="pattern-items">
+      @for (pattern of antiPatterns; track pattern.id) {
+        <div class="pattern-item" (click)="toggleExpand(pattern.id)">
+          <div class="pattern-header">
+            <span class="badge" [class]="'badge-' + pattern.severity.toLowerCase()">
+              {{ pattern.severity }}
+            </span>
+            <span class="pattern-name">{{ formatPatternType(pattern.patternType) }}</span>
+            <svg 
+              class="expand-icon" 
+              [class.expanded]="expandedId === pattern.id"
+              width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+
+          @if (expandedId === pattern.id) {
+            <div class="pattern-details">
+              <p class="pattern-description">{{ pattern.description }}</p>
+              
+              <div class="affected-services">
+                <span class="detail-label">Affected Services:</span>
+                <div class="service-tags">
+                  @for (service of pattern.affectedServices; track service) {
+                    <span class="service-tag">{{ service }}</span>
+                  }
+                </div>
+              </div>
+
+              @if (pattern.remediation) {
+                <div class="remediation">
+                  <span class="detail-label">Recommended Action:</span>
+                  <p>{{ pattern.remediation }}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

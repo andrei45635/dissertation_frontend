@@ -1,0 +1,89 @@
+<div class="container">
+  @if (isLoading) {
+    <div class="loading">
+      <div class="spinner-large"></div>
+      <p>Loading results...</p>
+    </div>
+  } @else if (result) {
+    <div class="results-page">
+      <div class="results-header">
+        <div>
+          <a routerLink="/upload" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Back to Upload
+          </a>
+          <h1 class="results-title">Analysis Results</h1>
+        </div>
+        <button class="btn btn-secondary" (click)="exportResults()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export JSON
+        </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <app-health-score [score]="result.healthScore"></app-health-score>
+        </div>
+        <div class="stat-card metrics-card">
+          <h3 class="metrics-title">Summary</h3>
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="metric-value">{{ result.servicesAnalyzed }}</span>
+              <span class="metric-label">Services</span>
+            </div>
+            <div class="metric">
+              <span class="metric-value">{{ result.totalAntiPatterns }}</span>
+              <span class="metric-label">Anti-Patterns</span>
+            </div>
+            <div class="metric">
+              <span class="metric-value">{{ result.totalCodeSmells }}</span>
+              <span class="metric-label">Code Smells</span>
+            </div>
+            <div class="metric">
+              <span class="metric-value">{{ result.totalLinesOfCode | number }}</span>
+              <span class="metric-label">Lines of Code</span>
+            </div>
+          </div>
+        </div>
+        <div class="stat-card issues-card">
+          <h3 class="metrics-title">Issues by Severity</h3>
+          <div class="issues-list">
+            <div class="issue-row">
+              <span class="badge badge-critical">Critical</span>
+              <span class="issue-count">{{ result.criticalIssues }}</span>
+            </div>
+            <div class="issue-row">
+              <span class="badge badge-high">High</span>
+              <span class="issue-count">{{ result.highIssues }}</span>
+            </div>
+            <div class="issue-row">
+              <span class="badge badge-medium">Medium</span>
+              <span class="issue-count">{{ result.mediumIssues }}</span>
+            </div>
+            <div class="issue-row">
+              <span class="badge badge-low">Low</span>
+              <span class="issue-count">{{ result.lowIssues }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <app-anti-pattern-list [antiPatterns]="result.antiPatterns"></app-anti-pattern-list>
+        <app-dependency-graph [graph]="result.dependencyGraph"></app-dependency-graph>
+      </div>
+    </div>
+  } @else {
+    <div class="error-state">
+      <p>Failed to load results</p>
+      <a routerLink="/upload" class="btn btn-primary">Back to Upload</a>
+    </div>
+  }
+</div>

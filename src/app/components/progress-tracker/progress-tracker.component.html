@@ -1,0 +1,50 @@
+<div class="progress-tracker">
+  <div class="progress-header">
+    <h3 class="progress-title">Analysis in Progress</h3>
+    <span class="progress-percentage">{{ job.progressPercentage }}%</span>
+  </div>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" [style.width.%]="job.progressPercentage"></div>
+  </div>
+
+  <div class="progress-details">
+    <div class="detail-row">
+      <span class="detail-label">Status</span>
+      <span class="detail-value status-badge">{{ formatStatus(job.status) }}</span>
+    </div>
+    @if (job.currentPhase) {
+      <div class="detail-row">
+        <span class="detail-label">Current Phase</span>
+        <span class="detail-value">{{ job.currentPhase }}</span>
+      </div>
+    }
+    @if (job.currentService) {
+      <div class="detail-row">
+        <span class="detail-label">Analyzing</span>
+        <span class="detail-value">{{ job.currentService }}</span>
+      </div>
+    }
+    @if (job.totalServices > 0) {
+      <div class="detail-row">
+        <span class="detail-label">Services</span>
+        <span class="detail-value">{{ job.servicesCompleted }} / {{ job.totalServices }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="progress-steps">
+    @for (step of steps; track step.key) {
+      <div class="step" [class.active]="isStepActive(step.key)" [class.completed]="isStepCompleted(step.key)">
+        <div class="step-indicator">
+          @if (isStepCompleted(step.key)) {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          }
+        </div>
+        <span class="step-label">{{ step.label }}</span>
+      </div>
+    }
+  </div>
+</div>

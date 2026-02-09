@@ -1,0 +1,83 @@
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--surface);
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: var(--primary);
+  background-color: #f5f3ff;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-icon {
+  color: var(--secondary);
+}
+
+.upload-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.upload-subtext {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: var(--secondary);
+  margin-top: 8px;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.file-icon {
+  color: var(--primary);
+}
+
+.file-info {
+  flex: 1;
+  text-align: left;
+}
+
+.file-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.file-size {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.remove-btn {
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  background-color: #fef2f2;
+  color: var(--danger);
+}

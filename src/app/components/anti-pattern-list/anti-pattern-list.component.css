@@ -1,0 +1,120 @@
+.anti-pattern-list {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.list-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.list-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  color: var(--success);
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+}
+
+.pattern-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.pattern-item {
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pattern-item:last-child {
+  border-bottom: none;
+}
+
+.pattern-item:hover {
+  background-color: var(--background);
+}
+
+.pattern-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+}
+
+.pattern-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.expand-icon {
+  color: var(--secondary);
+  transition: transform 0.2s ease;
+}
+
+.expand-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.pattern-details {
+  padding: 0 24px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pattern-description {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.detail-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.service-tag {
+  padding: 4px 12px;
+  background-color: var(--background);
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.remediation p {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
