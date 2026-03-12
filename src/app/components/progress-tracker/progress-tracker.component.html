@@ -25,7 +25,7 @@
         <span class="detail-value">{{ job.currentService }}</span>
       </div>
     }
-    @if (job.totalServices > 0) {
+    @if (job.totalServices != null && job.totalServices! > 0) {
       <div class="detail-row">
         <span class="detail-label">Services</span>
         <span class="detail-value">{{ job.servicesCompleted }} / {{ job.totalServices }}</span>

@@ -1,0 +1,105 @@
+.snippets-container {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.snippets-heading {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.snippet-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.snippet-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #f3f4f6;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.snippet-header svg {
+  flex-shrink: 0;
+}
+
+.snippet-header .file-dir {
+  color: #9ca3af;
+}
+
+.snippet-header .file-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.snippet-code {
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.code-line {
+  display: flex;
+  border-left: 3px solid transparent;
+  padding-right: 16px;
+}
+
+.code-line.highlighted {
+  background: #fef2f2;
+  border-left-color: #f87171;
+}
+
+.code-line.highlighted .line-number {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.line-number {
+  display: inline-block;
+  width: 48px;
+  text-align: right;
+  padding-right: 12px;
+  color: #9ca3af;
+  user-select: none;
+  font-size: 11px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+code {
+  flex: 1;
+  padding-left: 8px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  white-space: pre;
+}
+
+.show-more-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.show-more-btn:hover {
+  text-decoration: underline;
+}
+

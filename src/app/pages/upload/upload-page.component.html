@@ -2,11 +2,42 @@
   <div class="upload-page">
     <div class="page-header">
       <h1 class="page-title">Analyze Microservices</h1>
-      <p class="page-subtitle">Upload your project to detect architectural anti-patterns</p>
+      <p class="page-subtitle">Upload a ZIP or clone a GitHub/GitLab repository to detect architectural anti-patterns</p>
     </div>
 
     @if (!isAnalyzing && !currentJob) {
       <div class="upload-section">
+        <!-- Mode tabs -->
+        <div class="mode-tabs">
+          <button
+            class="mode-tab"
+            [class.active]="activeMode === 'upload'"
+            (click)="setMode('upload')"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Upload ZIP
+          </button>
+          <button
+            class="mode-tab"
+            [class.active]="activeMode === 'clone'"
+            (click)="setMode('clone')"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="18" r="3"/>
+              <circle cx="6" cy="6" r="3"/>
+              <circle cx="18" cy="6" r="3"/>
+              <path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/>
+              <line x1="12" y1="12" x2="12" y2="15"/>
+            </svg>
+            Clone Repository
+          </button>
+        </div>
+
+        <!-- Project Name (shared) -->
         <div class="form-group">
           <label class="form-label">Project Name</label>
           <input
@@ -17,23 +48,81 @@
           />
         </div>
 
-        <app-file-upload (fileSelected)="onFileSelected($event)"></app-file-upload>
+        <!-- ZIP Upload panel -->
+        @if (activeMode === 'upload') {
+          <app-file-upload (fileSelected)="onFileSelected($event)"></app-file-upload>
 
-        @if (uploadProgress > 0 && uploadProgress < 100) {
-          <div class="upload-progress">
-            <div class="upload-progress-bar" [style.width.%]="uploadProgress"></div>
-          </div>
-          <p class="upload-progress-text">Uploading... {{ uploadProgress }}%</p>
+          @if (uploadProgress > 0 && uploadProgress < 100) {
+            <div class="upload-progress">
+              <div class="upload-progress-bar" [style.width.%]="uploadProgress"></div>
+            </div>
+            <p class="upload-progress-text">Uploading... {{ uploadProgress }}%</p>
+          }
         }
 
+        <!-- Git Clone panel -->
+        @if (activeMode === 'clone') {
+          <div class="clone-section">
+            <div class="form-group">
+              <label class="form-label">Repository URL</label>
+              <div class="input-with-icon">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+                <input
+                  type="url"
+                  class="form-input input-has-icon"
+                  [(ngModel)]="repoUrl"
+                  (ngModelChange)="onRepoUrlChange()"
+                  placeholder="https://github.com/owner/repository"
+                />
+              </div>
+              <p class="input-hint">Supports public GitHub and GitLab repositories</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Branch <span class="optional-label">(optional)</span></label>
+              <input
+                type="text"
+                class="form-input"
+                [(ngModel)]="branch"
+                placeholder="main"
+              />
+            </div>
+
+            @if (repoUrl && !isValidRepoUrl) {
+              <div class="validation-message">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Please enter a valid GitHub or GitLab URL (e.g. https://github.com/owner/repo)
+              </div>
+            }
+
+            @if (cloneError) {
+              <div class="error-message">
+                <p>{{ cloneError }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Start button -->
         <button
           class="btn btn-primary btn-block"
-          [disabled]="!selectedFile || !projectName || isUploading"
+          [disabled]="!canStartAnalysis"
           (click)="startAnalysis()"
         >
-          @if (isUploading) {
+          @if (isSubmitting) {
             <span class="spinner"></span>
-            Uploading...
+            @if (activeMode === 'upload') {
+              Uploading...
+            } @else {
+              Cloning...
+            }
           } @else {
             Start Analysis
           }
@@ -43,7 +132,7 @@
 
     @if (currentJob) {
       <app-progress-tracker [job]="currentJob"></app-progress-tracker>
-      
+
       @if (currentJob.status === 'FAILED') {
         <div class="error-message">
           <p>Analysis failed: {{ currentJob.errorMessage }}</p>

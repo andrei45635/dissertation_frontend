@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AnalysisJob, AnalysisResult, UploadResponse } from '../models';
+import { AnalysisJob, AnalysisResult, GitCloneRequest, Project, UploadResponse } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,8 @@ export class ApiService {
   private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
+
+  // ── Projects ──────────────────────────────────────────
 
   uploadProject(file: File, projectName: string): Observable<HttpEvent<UploadResponse>> {
     const formData = new FormData();
@@ -23,6 +25,24 @@ export class ApiService {
     });
   }
 
+  cloneProject(request: GitCloneRequest): Observable<UploadResponse> {
+    return this.http.post<UploadResponse>(`${this.baseUrl}/projects/clone`, request);
+  }
+
+  getProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.baseUrl}/projects`);
+  }
+
+  getProject(id: number): Observable<Project> {
+    return this.http.get<Project>(`${this.baseUrl}/projects/${id}`);
+  }
+
+  deleteProject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/projects/${id}`);
+  }
+
+  // ── Jobs ──────────────────────────────────────────────
+
   getJobStatus(jobId: number): Observable<AnalysisJob> {
     return this.http.get<AnalysisJob>(`${this.baseUrl}/jobs/${jobId}`);
   }
@@ -33,5 +53,9 @@ export class ApiService {
 
   getRecentJobs(): Observable<AnalysisJob[]> {
     return this.http.get<AnalysisJob[]>(`${this.baseUrl}/jobs/recent`);
+  }
+
+  cancelJob(jobId: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/jobs/${jobId}/cancel`, null);
   }
 }

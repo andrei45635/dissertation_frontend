@@ -42,6 +42,8 @@
                 </div>
               </div>
 
+              <app-code-snippet-viewer [snippets]="pattern.codeSnippets || []"></app-code-snippet-viewer>
+
               @if (pattern.remediation) {
                 <div class="remediation">
                   <span class="detail-label">Recommended Action:</span>

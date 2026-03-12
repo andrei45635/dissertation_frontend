@@ -1,23 +1,34 @@
+export type SourceType = 'ZIP_UPLOAD' | 'GIT_CLONE';
+
+export interface MicroserviceResponse {
+  id: number;
+  name: string;
+  relativePath: string;
+  linesOfCode: number;
+  numberOfEndpoints: number;
+}
+
 export interface Project {
   id: number;
   name: string;
-  sourceType: 'GITHUB' | 'GITLAB' | 'UPLOAD';
-  sourceUrl?: string;
+  sourceType: SourceType;
+  sourceUrl: string | null;
   createdAt: string;
+  microservices: MicroserviceResponse[];
 }
 
 export interface AnalysisJob {
   id: number;
   projectId: number;
   status: JobStatus;
-  currentPhase?: string;
-  currentService?: string;
-  servicesCompleted: number;
-  totalServices: number;
-  progressPercentage: number;
-  startedAt?: string;
-  completedAt?: string;
-  errorMessage?: string;
+  currentPhase: string | null;
+  currentService: string | null;
+  servicesCompleted: number | null;
+  totalServices: number | null;
+  progressPercentage: number | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  errorMessage: string | null;
 }
 
 export type JobStatus =
@@ -49,14 +60,22 @@ export interface AnalysisResult {
   dependencyGraph: DependencyGraph;
 }
 
+export interface CodeSnippet {
+  file: string;
+  startLine: number;
+  endLine: number;
+  highlightLine: number;
+  snippet: string;
+}
+
 export interface DetectedAntiPattern {
   id: number;
   patternType: AntiPatternType;
   severity: Severity;
   description: string;
   affectedServices: string[];
-  remediation?: string;
-  details?: Record<string, unknown>;
+  remediation: string;
+  codeSnippets: CodeSnippet[];
 }
 
 export type AntiPatternType =
@@ -66,7 +85,10 @@ export type AntiPatternType =
   | 'GOD_SERVICE'
   | 'CHATTY_SERVICE'
   | 'HARDCODED_ENDPOINTS'
-  | 'DISTRIBUTED_MONOLITH';
+  | 'DISTRIBUTED_MONOLITH'
+  | 'API_VERSIONING_ABSENCE'
+  | 'WRONG_CUTS'
+  | 'ESB_MISUSE';
 
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
@@ -92,3 +114,10 @@ export interface UploadResponse {
   projectId: number;
   jobId: number;
 }
+
+export interface GitCloneRequest {
+  repoUrl: string;
+  name: string;
+  branch?: string;
+}
+

@@ -34,7 +34,7 @@ export class HistoryPageComponent implements OnInit {
     });
   }
 
-  formatDate(dateStr?: string): string {
+  formatDate(dateStr: string | null): string {
     if (!dateStr) return 'Not started';
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {

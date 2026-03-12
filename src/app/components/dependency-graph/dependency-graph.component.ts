@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DependencyGraph } from '../../models';
 import cytoscape from 'cytoscape';
@@ -10,38 +10,55 @@ import cytoscape from 'cytoscape';
   templateUrl: './dependency-graph.component.html',
   styleUrl: './dependency-graph.component.css'
 })
-export class DependencyGraphComponent implements OnChanges, AfterViewInit {
+export class DependencyGraphComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() graph!: DependencyGraph;
   @ViewChild('graphContainer') graphContainer!: ElementRef;
 
   private cy: cytoscape.Core | null = null;
+  private viewReady = false;
 
   ngAfterViewInit(): void {
-    this.initGraph();
+    this.viewReady = true;
+    this.renderGraph();
   }
 
-  ngOnChanges(): void {
-    if (this.cy && this.graph) {
-      this.updateGraph();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['graph'] && this.viewReady) {
+      this.renderGraph();
     }
   }
 
-  private initGraph(): void {
+  ngOnDestroy(): void {
+    this.cy?.destroy();
+    this.cy = null;
+  }
+
+  private renderGraph(): void {
     if (!this.graph || !this.graphContainer) return;
 
+    // Destroy previous instance to avoid stale state
+    if (this.cy) {
+      this.cy.destroy();
+      this.cy = null;
+    }
+
+    // Coerce ALL ids to strings so edges always match nodes.
+    // Java backends may serialize Long ids as numbers in JSON,
+    // causing Cytoscape to silently drop edges with no matching node.
     const elements: cytoscape.ElementDefinition[] = [
       ...this.graph.nodes.map(node => ({
-        data: { 
-          id: node.id, 
+        data: {
+          id: String(node.id),
           label: node.name,
           size: Math.max(30, Math.min(60, node.linesOfCode / 100))
         }
       })),
       ...this.graph.edges.map((edge, index) => ({
-        data: { 
+        data: {
           id: `edge-${index}`,
-          source: edge.source, 
-          target: edge.target,
+          source: String(edge.source),
+          target: String(edge.target),
+          label: edge.type,
           weight: edge.weight
         }
       }))
@@ -84,11 +101,6 @@ export class DependencyGraphComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  private updateGraph(): void {
-    if (!this.cy) {
-      this.initGraph();
-    }
-  }
 
   resetZoom(): void {
     this.cy?.fit();

@@ -1,4 +1,32 @@
-.idea
-.angular
-node_modules/
+# Dependencies
+/node_modules/
 package-lock.json
+
+# Build output
+/dist/
+
+# Angular cache
+/.angular/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Environment overrides
+/src/environments/environment.prod.ts
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+*.tgz
+.sass-cache/

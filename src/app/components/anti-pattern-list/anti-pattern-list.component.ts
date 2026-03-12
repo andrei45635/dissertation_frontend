@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DetectedAntiPattern } from '../../models';
+import { CodeSnippetViewerComponent } from '../code-snippet-viewer/code-snippet-viewer.component';
 
 @Component({
   selector: 'app-anti-pattern-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CodeSnippetViewerComponent],
   templateUrl: './anti-pattern-list.component.html',
   styleUrl: './anti-pattern-list.component.css'
 })
