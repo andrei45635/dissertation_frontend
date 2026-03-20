@@ -17,19 +17,199 @@
           </a>
           <h1 class="results-title">Analysis Results</h1>
         </div>
-        <button class="btn btn-secondary" (click)="exportResults()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Export JSON
-        </button>
+        <div class="results-header-actions">
+          @if (projectId) {
+            <div class="reanalyze-dropdown">
+              <button
+                class="btn btn-primary"
+                [disabled]="isReanalyzing || isUploading"
+                (click)="toggleMenu()"
+              >
+                @if (isReanalyzing || isUploading) {
+                  <span class="spinner"></span>
+                  Re-Analyzing...
+                } @else {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                  </svg>
+                  Re-Analyze
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                }
+              </button>
+              @if (showReanalyzeMenu) {
+                <div class="dropdown-menu">
+                  <button class="dropdown-item" (click)="reanalyze()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="23 4 23 10 17 10"/>
+                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                    <div class="dropdown-item-text">
+                      <span class="dropdown-item-label">Re-analyze ({{ sourceLabel }})</span>
+                      <span class="dropdown-item-hint">
+                        @if (isGitProject) {
+                          Re-clone the repo to pick up new commits
+                        } @else {
+                          Re-scan existing files
+                        }
+                      </span>
+                    </div>
+                  </button>
+                  <button class="dropdown-item" (click)="openReuploadModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <div class="dropdown-item-text">
+                      <span class="dropdown-item-label">Upload new ZIP</span>
+                      <span class="dropdown-item-hint">Replace source files with a new archive</span>
+                    </div>
+                  </button>
+                  <button class="dropdown-item" (click)="openGitModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="18" r="3"/>
+                      <circle cx="6" cy="6" r="3"/>
+                      <circle cx="18" cy="6" r="3"/>
+                      <path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/>
+                      <line x1="12" y1="12" x2="12" y2="15"/>
+                    </svg>
+                    <div class="dropdown-item-text">
+                      <span class="dropdown-item-label">Clone from GitHub / GitLab</span>
+                      <span class="dropdown-item-hint">Switch or update the Git repository URL</span>
+                    </div>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+          <button class="btn btn-secondary" (click)="exportResults()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export JSON
+          </button>
+        </div>
       </div>
+
+      <!-- Re-upload modal -->
+      @if (showReuploadModal) {
+        <div class="modal-overlay" (click)="closeModals()">
+          <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h3>Upload New ZIP</h3>
+              <button class="modal-close" (click)="closeModals()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p class="modal-hint">Upload a new ZIP archive to replace the project source files and trigger a re-analysis.</p>
+              <app-file-upload (fileSelected)="onReuploadFileSelected($event)"></app-file-upload>
+              @if (uploadProgress > 0 && uploadProgress < 100) {
+                <div class="upload-progress">
+                  <div class="upload-progress-bar" [style.width.%]="uploadProgress"></div>
+                </div>
+                <p class="upload-progress-text">Uploading... {{ uploadProgress }}%</p>
+              }
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="closeModals()">Cancel</button>
+              <button class="btn btn-primary" [disabled]="!reuploadFile || isUploading" (click)="submitReupload()">
+                @if (isUploading) {
+                  <span class="spinner"></span> Uploading...
+                } @else {
+                  Upload & Analyze
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Git clone modal -->
+      @if (showGitModal) {
+        <div class="modal-overlay" (click)="closeModals()">
+          <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h3>Clone from GitHub / GitLab</h3>
+              <button class="modal-close" (click)="closeModals()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p class="modal-hint">Enter a public repository URL to switch the project source and trigger a re-analysis.</p>
+              <div class="form-group">
+                <label class="form-label">Repository URL</label>
+                <input
+                  type="url"
+                  class="form-input"
+                  [(ngModel)]="gitRepoUrl"
+                  placeholder="https://github.com/owner/repository"
+                />
+                @if (gitRepoUrl && !isValidGitUrl) {
+                  <p class="validation-msg">Enter a valid GitHub or GitLab HTTPS URL</p>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label">Branch <span class="optional-label">(optional)</span></label>
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="gitBranch"
+                  placeholder="main"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="closeModals()">Cancel</button>
+              <button class="btn btn-primary" [disabled]="!isValidGitUrl || isReanalyzing" (click)="submitGitClone()">
+                Clone & Analyze
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Re-analysis progress tracker -->
+      @if (reanalyzeJob) {
+        <app-progress-tracker [job]="reanalyzeJob"></app-progress-tracker>
+      }
+
+      <!-- Re-analysis error -->
+      @if (reanalyzeError) {
+        <div class="reanalyze-error">
+          <p>{{ reanalyzeError }}</p>
+        </div>
+      }
+
+      <!-- Diff banner (when comparison exists) -->
+      @if (result.diff) {
+        <app-diff-banner [diff]="result.diff"></app-diff-banner>
+      } @else {
+        <div class="first-analysis-note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span>This is the first analysis for this project. Re-analyze later to track changes over time.</span>
+        </div>
+      }
 
       <div class="stats-grid">
         <div class="stat-card">
-          <app-health-score [score]="result.healthScore"></app-health-score>
+          <app-health-score
+            [score]="result.healthScore"
+            [grade]="result.healthScoreBreakdown?.grade ?? null"
+          ></app-health-score>
         </div>
         <div class="stat-card metrics-card">
           <h3 class="metrics-title">Summary</h3>
@@ -74,6 +254,10 @@
           </div>
         </div>
       </div>
+
+      @if (result.healthScoreBreakdown) {
+        <app-health-score-breakdown [breakdown]="result.healthScoreBreakdown"></app-health-score-breakdown>
+      }
 
       <div class="details-grid">
         <app-anti-pattern-list [antiPatterns]="result.antiPatterns"></app-anti-pattern-list>

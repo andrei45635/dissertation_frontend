@@ -6,6 +6,9 @@
     </svg>
     <div class="score-value">{{ score }}</div>
   </div>
+  @if (grade) {
+    <div class="grade-badge" [class]="getGradeClass()">{{ grade }}</div>
+  }
   <div class="score-label">Health Score</div>
   <div class="score-description">{{ getScoreDescription() }}</div>
 </div>

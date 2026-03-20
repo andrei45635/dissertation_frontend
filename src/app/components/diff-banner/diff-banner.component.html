@@ -1,0 +1,220 @@
+<div class="diff-banner">
+  <!-- Summary Header -->
+  <div class="diff-header">
+    <div class="diff-header-left">
+      <div class="diff-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+          <polyline points="17 6 23 6 23 12"/>
+        </svg>
+      </div>
+      <div class="diff-header-text">
+        <h3 class="diff-title">Analysis #{{ diff.analysisNumber }} — Changes Detected</h3>
+        <p class="diff-summary">{{ diff.summary }}</p>
+      </div>
+    </div>
+    <div class="health-delta-badge" [class]="healthDeltaClass">
+      <span class="delta-arrow">{{ healthDeltaIcon }}</span>
+      <span class="delta-value">{{ diff.healthScoreDelta > 0 ? '+' : '' }}{{ diff.healthScoreDelta }}</span>
+    </div>
+  </div>
+
+  <!-- Score Comparison -->
+  <div class="score-comparison">
+    <div class="score-before">
+      <span class="score-label">Previous</span>
+      <span class="score-number">{{ diff.previousHealthScore }}</span>
+      <span class="grade-pill" [class]="getGradeClass(diff.previousGrade)">{{ diff.previousGrade }}</span>
+    </div>
+    <div class="score-arrow">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </div>
+    <div class="score-after">
+      <span class="score-label">Current</span>
+      <span class="score-number">{{ diff.currentHealthScore }}</span>
+      <span class="grade-pill" [class]="getGradeClass(diff.currentGrade)">{{ diff.currentGrade }}</span>
+    </div>
+  </div>
+
+  <!-- Anti-Pattern Changes -->
+  @if (diff.resolvedAntiPatterns.length > 0 || diff.newAntiPatterns.length > 0 || diff.unchangedAntiPatterns.length > 0) {
+    <div class="diff-section">
+      <div class="diff-section-header" (click)="toggleSection('patterns')" (keydown.enter)="toggleSection('patterns')" tabindex="0" role="button">
+        <h4 class="diff-section-title">Anti-Pattern Changes</h4>
+        <div class="pattern-summary-badges">
+          @if (diff.resolvedAntiPatterns.length > 0) {
+            <span class="pattern-count resolved">✓ {{ diff.resolvedAntiPatterns.length }} resolved</span>
+          }
+          @if (diff.newAntiPatterns.length > 0) {
+            <span class="pattern-count new-issue">✗ {{ diff.newAntiPatterns.length }} new</span>
+          }
+          @if (diff.unchangedAntiPatterns.length > 0) {
+            <span class="pattern-count unchanged">{{ diff.unchangedAntiPatterns.length }} unchanged</span>
+          }
+        </div>
+        <svg
+          class="expand-icon"
+          [class.rotated]="expandedSection === 'patterns'"
+          width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+
+      @if (expandedSection === 'patterns') {
+        <div class="diff-section-content">
+          @if (diff.resolvedAntiPatterns.length > 0) {
+            <div class="pattern-group">
+              <h5 class="pattern-group-title resolved-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                Resolved
+              </h5>
+              @for (pattern of diff.resolvedAntiPatterns; track pattern.patternType + pattern.description) {
+                <div class="pattern-change-item resolved-item">
+                  <span class="badge" [class]="'badge-' + pattern.severity.toLowerCase()">{{ pattern.severity }}</span>
+                  <div class="pattern-change-info">
+                    <span class="pattern-change-name">{{ formatPatternType(pattern.patternType) }}</span>
+                    <span class="pattern-change-desc">{{ pattern.description }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (diff.newAntiPatterns.length > 0) {
+            <div class="pattern-group">
+              <h5 class="pattern-group-title new-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                New Issues
+              </h5>
+              @for (pattern of diff.newAntiPatterns; track pattern.patternType + pattern.description) {
+                <div class="pattern-change-item new-item">
+                  <span class="badge" [class]="'badge-' + pattern.severity.toLowerCase()">{{ pattern.severity }}</span>
+                  <div class="pattern-change-info">
+                    <span class="pattern-change-name">{{ formatPatternType(pattern.patternType) }}</span>
+                    <span class="pattern-change-desc">{{ pattern.description }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (diff.unchangedAntiPatterns.length > 0) {
+            <div class="pattern-group">
+              <h5 class="pattern-group-title unchanged-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Unchanged
+              </h5>
+              @for (pattern of diff.unchangedAntiPatterns; track pattern.patternType + pattern.description) {
+                <div class="pattern-change-item unchanged-item">
+                  <span class="badge" [class]="'badge-' + pattern.severity.toLowerCase()">{{ pattern.severity }}</span>
+                  <div class="pattern-change-info">
+                    <span class="pattern-change-name">{{ formatPatternType(pattern.patternType) }}</span>
+                    <span class="pattern-change-desc">{{ pattern.description }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Category Comparison -->
+  <div class="diff-section">
+    <div class="diff-section-header" (click)="toggleSection('categories')" (keydown.enter)="toggleSection('categories')" tabindex="0" role="button">
+      <h4 class="diff-section-title">Category Comparison</h4>
+      <svg
+        class="expand-icon"
+        [class.rotated]="expandedSection === 'categories'"
+        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+
+    @if (expandedSection === 'categories') {
+      <div class="diff-section-content">
+        <div class="category-deltas">
+          @for (cat of diff.categoryDeltas; track cat.categoryName) {
+            <div class="category-delta-row">
+              <div class="category-delta-header">
+                <span class="category-delta-name">{{ cat.categoryName }}</span>
+                <span class="category-delta-value" [class]="getDeltaClass(cat.delta)">
+                  {{ formatDelta(cat.delta) }}
+                </span>
+              </div>
+              <div class="category-delta-bars">
+                <div class="bar-row">
+                  <span class="bar-label">Before</span>
+                  <div class="bar-track">
+                    <div class="bar-fill bar-previous" [style.width.%]="getCategoryBarWidth(cat.previousScore, cat.maxScore)"></div>
+                  </div>
+                  <span class="bar-score">{{ cat.previousScore }}/{{ cat.maxScore }}</span>
+                </div>
+                <div class="bar-row">
+                  <span class="bar-label">After</span>
+                  <div class="bar-track">
+                    <div
+                      class="bar-fill"
+                      [class]="getCategoryBarClass(cat.currentScore, cat.maxScore)"
+                      [style.width.%]="getCategoryBarWidth(cat.currentScore, cat.maxScore)"
+                    ></div>
+                  </div>
+                  <span class="bar-score">{{ cat.currentScore }}/{{ cat.maxScore }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Metric Deltas -->
+  <div class="diff-section">
+    <div class="diff-section-header" (click)="toggleSection('metrics')" (keydown.enter)="toggleSection('metrics')" tabindex="0" role="button">
+      <h4 class="diff-section-title">Metric Changes</h4>
+      <svg
+        class="expand-icon"
+        [class.rotated]="expandedSection === 'metrics'"
+        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+
+    @if (expandedSection === 'metrics') {
+      <div class="diff-section-content">
+        <div class="metrics-delta-grid">
+          @for (card of metricCards; track card.label) {
+            <div class="metric-delta-card">
+              <span class="metric-delta-label">{{ card.label }}</span>
+              <div class="metric-delta-values">
+                <span class="metric-previous">{{ card.isDouble ? card.metric.previous.toFixed(2) : card.metric.previous }}</span>
+                <span class="metric-arrow">→</span>
+                <span class="metric-current">{{ card.isDouble ? card.metric.current.toFixed(2) : card.metric.current }}</span>
+              </div>
+              <span class="metric-delta-badge" [class]="getDeltaClass(card.metric.delta, card.inverse)">
+                {{ card.isDouble ? formatDoubleDelta(card.metric.delta, card.inverse) : formatDelta(card.metric.delta, card.inverse) }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
+

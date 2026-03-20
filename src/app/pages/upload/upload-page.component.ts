@@ -24,6 +24,7 @@ export class UploadPageComponent implements OnDestroy {
   projectName = '';
   isAnalyzing = false;
   currentJob: AnalysisJob | null = null;
+  uploadError: string | null = null;
 
   // ZIP upload
   selectedFile: File | null = null;
@@ -98,6 +99,7 @@ export class UploadPageComponent implements OnDestroy {
 
     this.isUploading = true;
     this.uploadProgress = 0;
+    this.uploadError = null;
 
     this.apiService.uploadProject(this.selectedFile, this.projectName).subscribe({
       next: (event) => {
@@ -111,6 +113,7 @@ export class UploadPageComponent implements OnDestroy {
       },
       error: (error) => {
         this.isUploading = false;
+        this.uploadError = error.error?.message || 'Upload failed. Please try again.';
         console.error('Upload failed:', error);
       }
     });
@@ -178,6 +181,7 @@ export class UploadPageComponent implements OnDestroy {
     this.isAnalyzing = false;
     this.isCloning = false;
     this.cloneError = null;
+    this.uploadError = null;
     this.currentJob = null;
     this.uploadProgress = 0;
   }

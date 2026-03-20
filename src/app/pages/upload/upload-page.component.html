@@ -58,6 +58,12 @@
             </div>
             <p class="upload-progress-text">Uploading... {{ uploadProgress }}%</p>
           }
+
+          @if (uploadError) {
+            <div class="error-message">
+              <p>{{ uploadError }}</p>
+            </div>
+          }
         }
 
         <!-- Git Clone panel -->

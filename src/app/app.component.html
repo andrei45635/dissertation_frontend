@@ -6,8 +6,23 @@
         <span class="logo-text">MSA Detector</span>
       </a>
       <nav class="nav">
-        <a routerLink="/upload" routerLinkActive="active" class="nav-link">Upload</a>
-        <a routerLink="/history" routerLinkActive="active" class="nav-link">History</a>
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/upload" routerLinkActive="active" class="nav-link">Upload</a>
+          <a routerLink="/history" routerLinkActive="active" class="nav-link">History</a>
+          <div class="nav-divider"></div>
+          <span class="user-name">{{ (authService.currentUser$ | async)?.name }}</span>
+          <button class="btn-logout" (click)="logout()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sign Out
+          </button>
+        } @else {
+          <a routerLink="/login" routerLinkActive="active" class="nav-link">Sign In</a>
+          <a routerLink="/register" routerLinkActive="active" class="btn btn-primary btn-sm">Sign Up</a>
+        }
       </nav>
     </div>
   </header>

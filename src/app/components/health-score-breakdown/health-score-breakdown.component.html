@@ -1,0 +1,61 @@
+<div class="breakdown-section">
+  <div class="breakdown-header">
+    <h3 class="breakdown-title">Health Score Breakdown</h3>
+    <span class="grade-badge" [class]="getGradeClass(breakdown.grade)">
+      Grade {{ breakdown.grade }}
+    </span>
+  </div>
+
+  <div class="categories">
+    @for (category of breakdown.categories; track category.name) {
+      <div class="category-card" [class.expanded]="expandedCategory === category.name">
+        <div class="category-header" (click)="toggleCategory(category.name)" (keydown.enter)="toggleCategory(category.name)" (keydown.space)="toggleCategory(category.name)" tabindex="0" role="button">
+          <div class="category-info">
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-score">{{ category.score }} / {{ category.maxScore }}</span>
+          </div>
+          <div class="category-bar-container">
+            <div
+              class="category-bar"
+              [class]="getBarClass(category)"
+              [style.width.%]="getPercentage(category)"
+            ></div>
+          </div>
+          <svg
+            class="expand-icon"
+            [class.rotated]="expandedCategory === category.name"
+            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+
+        @if (expandedCategory === category.name) {
+          <div class="category-details">
+            <p class="category-description">{{ category.description }}</p>
+
+            @if (category.deductions.length === 0) {
+              <div class="no-deductions">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                Perfect score — no issues found
+              </div>
+            } @else {
+              <div class="deductions-list">
+                @for (deduction of category.deductions; track deduction.reason) {
+                  <div class="deduction-row">
+                    <span class="deduction-reason">{{ deduction.reason }}</span>
+                    <span class="deduction-points">−{{ deduction.pointsLost }} pts</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+
